@@ -3,3 +3,18 @@ Quiz
 ####################
 
 1. Enterprise
+2. Boilerplate code refers to sections of code that are repeated in multiple places with little or no variation. 
+3. Spring Framework
+4. Pivotal software
+5. https://start.spring.io/
+6. Spring-based applications that you can "just run". No need for the requirements for web servers.
+
+
+7,8,9. 
+Dependency injection is a software design pattern that allows us to decouple the code that needs something from the code that provides it.
+
+Basically, it is like having someone else put the puzzle together for you. Instead of manually connecting the pieces, you define the relationships between the components and let a framework or container handle the connections for you.
+
+10. mvn spring-boot:run
+
+
