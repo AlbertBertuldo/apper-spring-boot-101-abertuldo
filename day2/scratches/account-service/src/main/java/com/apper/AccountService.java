@@ -14,7 +14,9 @@ public class AccountService {
 
     public Account create(String firstName, String lastName, String username, String clearPassword) {
         Account account = new Account();
-        account.setId(UUID.randomUUID().toString());
+        String id = UUID.randomUUID().toString();
+        System.out.println("Generated id: " + id);
+        account.setId(id);
         account.setBalance(1_000.0);
 
         LocalDateTime now = LocalDateTime.now();
@@ -32,9 +34,14 @@ public class AccountService {
         return account;
     }
 
-//    public Account get() {
-//
-//    }
+    public Account get(String accountId) {
+        for (Account account : accounts){
+            if (account.getId().equals(accountId)){
+                return account;
+            }
+        }
+        return null;
+    }
 //
 //    public void update(){
 //

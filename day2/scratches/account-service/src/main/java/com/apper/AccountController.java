@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
 
-
-
     private final AccountService accountService;
 
     public AccountController(AccountService accountService) {
@@ -32,5 +30,24 @@ public class AccountController {
 
         return response;
     }
+
+    //Spring Boot Rest API with Path variable, GetMapping used to Get resources using id parameter
+    //{id} - URI template variable
+    //http://localhost:8080/{accountid}
+    @GetMapping("{accountId}")
+    public GetAccountResponse getAccount(@PathVariable String accountId){
+        Account account = accountService.get(accountId);
+
+        GetAccountResponse response = new GetAccountResponse();
+        response.setBalance(account.getBalance());
+        response.setFirstName(account.getFirstName());
+        response.setLastName(account.getLastName());
+        response.setUserName(account.getUserName());
+        response.setRegistrationDate(account.getCreationDate());
+
+        return response;
+    }
+
+
 
 }
