@@ -52,9 +52,10 @@ public class ServiceExceptionHandler {
     }
 
     @ExceptionHandler(InvalidUserAgeException.class)
-    @ResponseBody
-    public ServiceError handleInvalidUserAgeException(InvalidUserAgeException ex) {
-        return new ServiceError(ex.getMessage());
+    public ResponseEntity<Object> handleInvalidUserAgeException(InvalidUserAgeException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", ex.getMessage());
+        return ResponseEntity.badRequest().body(response);
     }
 
 }
