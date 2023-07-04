@@ -1,5 +1,7 @@
 package com.apper.estore;
 
+import com.apper.estore.payload.InvalidUserAgeException;
+import com.apper.estore.payload.ServiceError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
@@ -51,10 +52,9 @@ public class ServiceExceptionHandler {
     }
 
     @ExceptionHandler(InvalidUserAgeException.class)
-    public ResponseEntity<Object> handleInvalidUserAgeException(InvalidUserAgeException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        return ResponseEntity.badRequest().body(response);
+    @ResponseBody
+    public ServiceError handleInvalidUserAgeException(InvalidUserAgeException ex) {
+        return new ServiceError(ex.getMessage());
     }
 
 }
