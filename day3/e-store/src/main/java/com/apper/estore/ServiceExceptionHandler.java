@@ -50,12 +50,11 @@ public class ServiceExceptionHandler {
 //            return new ServiceError("Unknown invalid argument encountered");
 //        }
     }
-
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidUserAgeException.class)
-    public ResponseEntity<Object> handleInvalidUserAgeException(InvalidUserAgeException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("message", ex.getMessage());
-        return ResponseEntity.badRequest().body(response);
+    @ResponseBody
+    public ServiceError handleInvalidUserAgeException(InvalidUserAgeException ex) {
+        return new ServiceError(ex.getMessage());
     }
 
 }
