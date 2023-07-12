@@ -1,6 +1,9 @@
 package com.apper.theblogservice;
 
+import com.apper.theblogservice.exceptions.BlogNotFoundException;
+import com.apper.theblogservice.exceptions.BloggerNotFoundException;
 import com.apper.theblogservice.exceptions.EmailAlreadyRegisteredException;
+import com.apper.theblogservice.exceptions.InvalidBloggerIdException;
 import com.apper.theblogservice.model.Blog;
 import com.apper.theblogservice.model.Blogger;
 import com.apper.theblogservice.payload.*;
@@ -39,7 +42,7 @@ public class BloggerApi {
     }
 
     @GetMapping("/blogger/{id}")
-    public BloggerDetails getBlogger(@PathVariable String id) {
+    public BloggerDetails getBlogger(@PathVariable String id) throws BloggerNotFoundException{
         Blogger blogger = bloggerService.getBlogger(id);
 
         BloggerDetails bloggerDetails = new BloggerDetails();
@@ -52,7 +55,7 @@ public class BloggerApi {
     }
 
     @GetMapping("/blogger")
-    public List<BloggerDetails> getAllAccounts(){
+    public List<BloggerDetails> getAllBloggers() throws BloggerNotFoundException{
         List<BloggerDetails> responseList = new ArrayList<>();
         for (Blogger blogger : bloggerService.getAllBlogger()){
             BloggerDetails response = createGetAllBloggerResponse(blogger);
@@ -73,7 +76,7 @@ public class BloggerApi {
 
     @PostMapping("/blog")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateBlogResponse createBlog(@RequestBody @Valid CreateBlogRequest request) {
+    public CreateBlogResponse createBlog(@RequestBody @Valid CreateBlogRequest request) throws BloggerNotFoundException, InvalidBloggerIdException {
         Blog createdBlog = bloggerService.createBlog(request.getTitle(), request.getBody(), request.getBloggerId());
 
         CreateBlogResponse response = new CreateBlogResponse();
@@ -84,11 +87,9 @@ public class BloggerApi {
         return response;
     }
 
-    ///////Check Here
-
 
     @GetMapping("/blog/{id}")
-    public BlogDetails getBlog(@PathVariable String id) {
+    public BlogDetails getBlog(@PathVariable String id) throws BlogNotFoundException{
         Blog blog = bloggerService.getBlog(id);
 
         BlogDetails blogDetails = new BlogDetails();
@@ -102,7 +103,7 @@ public class BloggerApi {
     }
 
     @GetMapping("/blog")
-    public List<BlogDetails> getAllBlogs() {
+    public List<BlogDetails> getAllBlogs() throws BlogNotFoundException {
         List<BlogDetails> responseList = new ArrayList<>();
         for (Blog blog : bloggerService.getAllBlogs()) {
             BlogDetails response = createBlogDetailsResponse(blog);
@@ -126,12 +127,12 @@ public class BloggerApi {
 
     @PutMapping("/blog/{blogId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateBlog(@PathVariable String blogId, @RequestBody UpdateBlogRequest request) {
+    public void updateBlog(@PathVariable String blogId, @RequestBody UpdateBlogRequest request) throws BlogNotFoundException {
         bloggerService.updateBlog(blogId, request.getTitle(), request.getBody());
     }
 
     @GetMapping("/blog/blogger/{bloggerId}")
-    public List<BlogDetails> getBlogsByBlogger(@PathVariable String bloggerId) {
+    public List<BlogDetails> getBlogsByBlogger(@PathVariable String bloggerId) throws BloggerNotFoundException, BlogNotFoundException{
         List<BlogDetails> responseList = new ArrayList<>();
         for (Blog blog : bloggerService.getBlogsByBlogger(bloggerId)) {
             BlogDetails response = createBlogDetailsResponse(blog);

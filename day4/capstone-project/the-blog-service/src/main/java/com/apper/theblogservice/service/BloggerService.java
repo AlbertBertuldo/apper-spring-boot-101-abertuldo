@@ -1,5 +1,8 @@
 package com.apper.theblogservice.service;
 
+import com.apper.theblogservice.exceptions.BlogNotFoundException;
+import com.apper.theblogservice.exceptions.BloggerNotFoundException;
+import com.apper.theblogservice.exceptions.InvalidBloggerIdException;
 import com.apper.theblogservice.model.Blog;
 import com.apper.theblogservice.model.Blogger;
 import com.apper.theblogservice.repository.BlogRepository;
@@ -32,9 +35,9 @@ public class BloggerService {
 
     }
 
-    public Blogger getBlogger(String id) {
+    public Blogger getBlogger(String id) throws BloggerNotFoundException{
         Optional<Blogger> bloggerResult = bloggerRepository.findById(id);
-        return bloggerResult.get();
+        return bloggerResult.orElseThrow(() -> new BloggerNotFoundException("No blogger found with id: " + id));
     }
 
     public boolean isEmailRegistered(String email) {
@@ -56,7 +59,15 @@ public class BloggerService {
         return bloggerList;
     }
 
-    public Blog createBlog(String title, String body, String bloggerId) {
+    public Blog createBlog(String title, String body, String bloggerId) throws BloggerNotFoundException, InvalidBloggerIdException {
+        if(bloggerId.equals("")) {
+            throw new InvalidBloggerIdException("blogger_id cannot be empty");
+        }
+
+        if(!bloggerRepository.existsById(bloggerId)) {
+            throw new BloggerNotFoundException("No registered blogger found with blogger id: " + bloggerId);
+        }
+
         Blogger blogger = getBlogger(bloggerId);
 
         Blog blog = new Blog();
@@ -71,7 +82,11 @@ public class BloggerService {
         return blogRepository.save(blog);
     }
 
-    public Blog updateBlog(String blogId, String title, String body) {
+    public Blog updateBlog(String blogId, String title, String body) throws BlogNotFoundException {
+        if(!blogRepository.existsById(blogId)) {
+            throw new BlogNotFoundException("No such blog found with id: " + blogId);
+        }
+
         Optional<Blog> blogResult = blogRepository.findById(blogId);
         if (blogResult.isPresent()) {
             Blog blog = blogResult.get();
@@ -83,9 +98,9 @@ public class BloggerService {
         return null;
     }
 
-    public Blog getBlog(String id) {
+    public Blog getBlog(String id) throws BlogNotFoundException {
         Optional<Blog> blogResult = blogRepository.findById(id);
-        return blogResult.orElse(null);
+        return blogResult.orElseThrow(() -> new BlogNotFoundException("No blog found with id: " + id));
     }
 
     public List<Blog> getAllBlogs() {
@@ -93,7 +108,10 @@ public class BloggerService {
                 .collect(Collectors.toList());
     }
 
-    public List<Blog> getBlogsByBlogger(String bloggerId) {
+    public List<Blog> getBlogsByBlogger(String bloggerId) throws BloggerNotFoundException {
+        if (!bloggerRepository.existsById(bloggerId)) {
+            throw new BloggerNotFoundException("No registered blogger found with blogger id: " + bloggerId);
+        }
         Optional<Blogger> bloggerResult = bloggerRepository.findById(bloggerId);
         if (bloggerResult.isPresent()) {
             Blogger blogger = bloggerResult.get();
